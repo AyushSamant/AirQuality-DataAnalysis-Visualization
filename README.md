@@ -189,3 +189,72 @@ plt.ylabel('Average Level')
 plt.legend(title='Pollutant')
 plt.tight_layout()
 plt.show()
+
+
+# Objective 6: Identify the most polluted cities and visualize them.
+
+# Bar Plot: Top 10 polluted cities based on total pollutant level
+city_pollution = df.groupby(['city', 'pollutant_id'])['pollutant_avg'].mean().reset_index()
+pivot_city = city_pollution.pivot(index='city', columns='pollutant_id', values='pollutant_avg')
+pivot_city = pivot_city.fillna(0)
+pivot_city['Total'] = pivot_city.sum(axis=1)
+top_cities = pivot_city.sort_values(by='Total', ascending=False).head(10)
+
+plt.figure(figsize=(12, 6))
+sns.barplot(x=top_cities.index, y=top_cities['Total'], palette='Reds_r')
+plt.title('Top Polluted Cities by Total Pollutant Level')
+plt.xlabel('City')
+plt.ylabel('Total Pollution Level')
+plt.xticks(rotation=45)
+plt.tight_layout()
+plt.show()
+
+# Objective 7: Correlation analysis between pollutants.
+
+# Heatmap: Correlation between numeric columns
+numeric_df = df.select_dtypes(include='number')
+cleaned_df = numeric_df.dropna(axis=1, how='all')
+cleaned_df = cleaned_df.loc[:, (cleaned_df != cleaned_df.iloc[0]).any()]
+correlation_matrix = cleaned_df.corr()
+
+if not correlation_matrix.empty:
+    plt.figure(figsize=(10, 8))
+    sns.heatmap(correlation_matrix, annot=True, cmap='coolwarm', fmt='.2f', linewidths=0.5)
+    plt.title("Pollutant Correlation Matrix")
+    plt.tight_layout()
+    plt.show()
+else:
+    print("Correlation matrix is empty. Please check your dataset.")
+
+# Objective 8: Air Quality Category Analysis
+
+# Categorizing AQI levels and plotting distribution
+def categorize_aqi(aqi):
+    if aqi <= 50:
+        return 'Good'
+    elif aqi <= 100:
+        return 'Satisfactory'
+    elif aqi <= 200:
+        return 'Moderate'
+    elif aqi <= 300:
+        return 'Poor'
+    elif aqi <= 400:
+        return 'Very Poor'
+    else:
+        return 'Severe'
+
+df['AQI_Category'] = df['pollutant_avg'].apply(categorize_aqi)
+
+# Bar Plot: AQI category distribution
+if 'AQI_Category' in df.columns:
+    category_counts = df['AQI_Category'].value_counts().sort_index()
+    plt.figure(figsize=(10, 6))
+    sns.barplot(x=category_counts.index, y=category_counts.values, palette='Spectral')
+    plt.title("Air Quality Category Distribution")
+    plt.xlabel("AQI Category")
+    plt.ylabel("Frequency")
+    plt.xticks(rotation=45)
+    plt.tight_layout()
+    plt.show()
+else:
+    print("Column 'AQI_Category' not found in the dataset.")
