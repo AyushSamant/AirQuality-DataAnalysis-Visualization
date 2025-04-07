@@ -209,18 +209,35 @@ plt.xticks(rotation=45)
 plt.tight_layout()
 plt.show()
 
+
 # Objective 7: Correlation analysis between pollutants.
 
-# Heatmap: Correlation between numeric columns
 numeric_df = df.select_dtypes(include='number')
 cleaned_df = numeric_df.dropna(axis=1, how='all')
 cleaned_df = cleaned_df.loc[:, (cleaned_df != cleaned_df.iloc[0]).any()]
 correlation_matrix = cleaned_df.corr()
+mask = np.triu(np.ones_like(correlation_matrix, dtype=bool))
 
+# heatmap
 if not correlation_matrix.empty:
-    plt.figure(figsize=(10, 8))
-    sns.heatmap(correlation_matrix, annot=True, cmap='coolwarm', fmt='.2f', linewidths=0.5)
-    plt.title("Pollutant Correlation Matrix")
+    plt.figure(figsize=(12, 10))
+    sns.set(style="white")
+
+    heatmap = sns.heatmap(
+        correlation_matrix,
+        mask=mask,
+        annot=True,
+        cmap='RdBu_r',
+        fmt='.2f',
+        linewidths=0.5,
+        square=True,
+        cbar_kws={"shrink": 0.75},
+        annot_kws={"size": 10}
+    )
+
+    plt.title("Correlation Matrix of Pollutants", fontsize=16, fontweight='bold', pad=20)
+    plt.xticks(rotation=45, ha='right', fontsize=10)
+    plt.yticks(rotation=0, fontsize=10)
     plt.tight_layout()
     plt.show()
 else:
