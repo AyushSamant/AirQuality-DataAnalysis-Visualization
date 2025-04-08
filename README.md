@@ -218,30 +218,27 @@ cleaned_df = cleaned_df.loc[:, (cleaned_df != cleaned_df.iloc[0]).any()]
 correlation_matrix = cleaned_df.corr()
 mask = np.triu(np.ones_like(correlation_matrix, dtype=bool))
 
+mask = np.triu(np.ones_like(correlation_matrix, dtype=bool))
+plt.figure(figsize=(10, 8))
+sns.set(style="white")
+
 # heatmap
-if not correlation_matrix.empty:
-    plt.figure(figsize=(12, 10))
-    sns.set(style="white")
+sns.heatmap(
+    correlation_matrix,
+    mask=mask,
+    annot=True,
+    cmap='RdBu_r',
+    fmt='.2f',
+    square=True,
+    linewidths=0.5,
+    cbar_kws={"shrink": 0.8}
+)
 
-    heatmap = sns.heatmap(
-        correlation_matrix,
-        mask=mask,
-        annot=True,
-        cmap='RdBu_r',
-        fmt='.2f',
-        linewidths=0.5,
-        square=True,
-        cbar_kws={"shrink": 0.75},
-        annot_kws={"size": 10}
-    )
-
-    plt.title("Correlation Matrix of Pollutants", fontsize=16, fontweight='bold', pad=20)
-    plt.xticks(rotation=45, ha='right', fontsize=10)
-    plt.yticks(rotation=0, fontsize=10)
-    plt.tight_layout()
-    plt.show()
-else:
-    print("Correlation matrix is empty. Please check your dataset.")
+plt.title("Pollutants Correlation Matrix", fontsize=14, fontweight='bold')
+plt.xticks(rotation=45, ha='right')
+plt.yticks(rotation=0)
+plt.tight_layout()
+plt.show()
 
 # Objective 8: Air Quality Category Analysis
 
