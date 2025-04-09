@@ -229,9 +229,12 @@ sns.heatmap(
     annot=True,
     cmap='RdBu_r',
     fmt='.2f',
-    square=True,
     linewidths=0.5,
-    cbar_kws={"shrink": 0.8}
+    square=True,
+    center=0,             
+    vmin=-1, vmax=1,     
+    cbar_kws={"shrink": 0.75},
+    annot_kws={"size": 10}
 )
 
 plt.title("Pollutants Correlation Matrix", fontsize=14, fontweight='bold')
